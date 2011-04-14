@@ -1,0 +1,38 @@
+application: power-usage-logger
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /items/\d+
+  script: app.py
+- url: /sensors
+  script: app.py
+- url: /sensors/[^/]+
+  script: app.py
+- url: /sensors/[^/]+/latest
+  script: app.py
+- url: /sensors/[^/]+/\d{4}
+  script: app.py
+- url: /sensors/[^/]+/\d{4}/\d{2}
+  script: app.py
+- url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}
+  script: app.py
+- url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}
+  script: app.py
+- url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}/\d{2}
+  script: app.py
+- url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}/\d{2}/\d{2}
+  script: app.py
+- url: /
+  script: app.py
+- url: /static/.*
+  static_files: static/\1
+  upload: static/(.*)
+- url: /crossdomain.xml
+  static_files: crossdomain.xml
+  upload: crossdomain.xml
+
+builtins:
+- datastore_admin: on
+- appstats: on
