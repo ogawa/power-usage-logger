@@ -52,7 +52,7 @@ class PowerUsage(db.Model):
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+  return render_template('index.html', url_root=request.url_root)
 
 def route_json(rule, **options):
   def decorator(func):

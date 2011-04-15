@@ -8,7 +8,100 @@
 
     <h2>API</h2>
 
+    <p>(*) が付与されたAPIは、URLの最後に「?callback=コールバック関数名」を付けるか、POSTデータに「callback=コールバック関数名」を含めると、JSONPとして機能します。関数名に使える文字は、英数字と「_」と「.」です。それ以外の文字が入っていると404のエラーになります。</p>
 
+    <h3>センサー一覧の取得</h3>
+
+    <ul>
+      <li>{{ url_root }}sensors
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridの一覧をJSONで返す。(未実装)</dd>
+	</dl>
+      </li>
+    </ul>
+
+    <h3>センサー情報の生成・取得</h3>
+
+    <ul>
+      <li>{{ url_root }}sensors/<em>sensorid</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd><p>sensoridの最新のデータをJSONで取得する。意味を後で変更する可能性あり。現状はlatestをGETした場合と同じ。</p></dd>
+	  <dt>POST</dt>
+	  <dd>
+	    <p>sensoridのデータを生成する。生成に成功すると、センサーデータアイテムのURIをJSONで返す。失敗すると400 Bad Requestを返す。</p>
+	    <p>date, usage, capacityをポストデータとして与える。dateは「%Y%m%d%H%M%S」の14桁の10進数で与える(例: 20110323000000)。usage, capacityも10進数。</p>
+	    <p>実行例:</p>
+	    <pre>
+$ curl {{ url_root }}sensors/tepco -d date=20110323000000 -d usage=3470 -d capacity=3750
+{
+  "uri": "{{ url_root }}items/115"
+}
+</pre>
+	  </dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/latest
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridの最新のデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridのYYYY年のsensoridのデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridのYYYY年mm月のsensoridのデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridのYYYY年mm月DD日のsensoridのデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>/<em>HH</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridのYYYY年mm月DD日HH時のsensoridのデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+      <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>/<em>HH</em>/<em>MM</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>sensoridのYYYY年mm月DD日HH時MM分のsensoridのデータをJSONで取得する。</dd>
+	</dl>
+      </li>
+    </ul>
+
+    <h3>センサーデータアイテムの操作</h3>
+
+    <ul>
+      <li>{{ url_root }}items/<em>itemid</em>
+	<dl>
+	  <dt>GET(*)</dt>
+	  <dd>itemidのセンサーデータをJSONで取得する。</dd>
+	  <dt>PUT</dt>
+	  <dd>多分実装しない。</dd>
+	  <dt>DELETE</dt>
+	  <dd>
+	    <p>itemidのセンサーデータを削除する。成功時にはステータスをJSONで返す。見つからない場合には404 Not Found。</p>
+	    <pre>
+$ curl -X DELETE {{ url_root }}items/115
+{
+  "status": "OK"
+}
+</pre>
+	  </dd>
+	</dl>
+      </li>
+    </ul>
 
     <h2>Source Code</h2>
 
@@ -22,6 +115,6 @@
     </ul>
 
     <hr />
-    <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="http://power-usage-logger.appspot.com/" show_faces="true" width="450" font=""></fb:like>
+    <script src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="{{ url_root }}" show_faces="true" width="450" font=""></fb:like>
   </body>
 </html>
