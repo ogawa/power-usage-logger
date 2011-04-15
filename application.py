@@ -37,8 +37,16 @@ class PowerUsage(db.Model):
         result[prop] = datetime.datetime.isoformat(getattr(usage, prop))
       else:
         result[prop] = getattr(usage, prop)
-    result['url'] = '/items/' + str(usage.key().id())
+    result['uri'] = usage.uri()
     return result
+
+  def uri(usage):
+    uri_root = ''
+    if not request:
+      uri_root = 'http://power-usage-logger.appspot.com/'
+    else:
+      uri_root = request.url_root
+    return uri_root + 'items/' + str(usage.key().id())
 
 ################################################################################
 
@@ -112,7 +120,11 @@ def item_delete(itemid):
   if usage:
     cleanup_related_cache(usage)
     usage.delete()
-    return "OK"
+    return { 'status': 'OK' }
+
+@route_cached_json('/sensors', methods=['GET', 'POST'])
+def sensors_get():
+  pass
 
 @route_cached_json('/sensors/<sensorid>', methods=['GET'])
 def sensor_get(sensorid):
@@ -150,7 +162,7 @@ def sensor_post(sensorid):
       capacity=capacity
       )
     usage.put()
-    return '/items/' + str(usage.key().id())
+    return { 'uri': usage.uri() }
   else:
     abort(400)
 
