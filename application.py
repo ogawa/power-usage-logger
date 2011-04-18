@@ -4,15 +4,14 @@
 # power-usage-logger
 #
 
-from flask import (
-  Flask, request, Response, abort, json, render_template
-)
+from flask import (Flask, request, Response, abort, json, render_template)
 app = Flask(__name__)
 app.debug = True
 
-from google.appengine.api import memcache
+from google.appengine.api import (memcache, urlfetch)
 from google.appengine.ext import db
-import datetime
+from datetime import datetime
+from pytz.gae import pytz
 import logging
 import re
 
@@ -34,7 +33,7 @@ class PowerUsage(db.Model):
     result = {}
     for prop in usage.properties():
       if prop == 'date' or prop == 'created':
-        result[prop] = datetime.datetime.isoformat(getattr(usage, prop))
+        result[prop] = datetime.isoformat(getattr(usage, prop))
       else:
         result[prop] = getattr(usage, prop)
     result['uri'] = usage.uri()
@@ -53,6 +52,49 @@ class PowerUsage(db.Model):
 @app.route('/')
 def index():
   return render_template('index.html', url_root=request.url_root)
+
+def jst_from_utc(dt):
+  return dt.replace(tzinfo=pytz.UTC).astimezone(pytz.timezone('Asia/Tokyo'))
+
+def utc_from_jst(dt):
+  return dt.replace(tzinfo=pytz.timezone('Asia/Tokyo')).astimezone(pytz.UTC)
+
+@app.route('/cron_tepco')
+def cron_tepco():
+  usages = PowerUsage.all()
+  usages = usages.filter("sensorid = ", "tepco")
+  usages = usages.order("-date")
+  last_tepco_usage = usages.get()
+  last_tepco_date = None
+  if last_tepco_usage:
+    # date is stored as a UTC date (Datestore)
+    last_tepco_date = jst_from_utc(last_tepco_usage.date)
+
+  result = urlfetch.fetch("http://tepco-usage-api.appspot.com/latest.json")
+  if result.status_code == 200:
+    tepco = json.loads(result.content)
+    date = datetime.strptime(tepco['entryfor'], '%Y-%m-%d %H:%M:%S')
+    # entryfor is given as a UTC date (JSON)
+    date = jst_from_utc(date)
+
+    if (not last_tepco_date) or (date > last_tepco_date):
+      tepco_usage = PowerUsage(
+        sensorid='tepco',
+        date=date,
+        year=date.year,
+        month=date.month,
+        day=date.day,
+        hour=date.hour,
+        minute=date.minute,
+        usage=tepco['usage'] * 10000,
+        capacity=tepco['capacity'] * 10000
+        )
+      tepco_usage.put()
+      cleanup_related_cache(tepco_usage)
+
+      logging.info('Add a new data for tepco.')
+      return ''
+  return ''
 
 def route_json(rule, **options):
   def decorator(func):
@@ -142,7 +184,8 @@ def sensor_post(sensorid):
   capacity = None
   if 'date' in request.form:
     try:
-      date = datetime.datetime.strptime(request.form['date'], '%Y%m%d%H%M%S')
+      date = datetime.strptime(request.form['date'], '%Y%m%d%H%M%S')
+      date = date.replace(tzinfo=pytz.timezone('Asia/Tokyo'))
     except ValueError:
       pass
   if 'usage' in request.form:

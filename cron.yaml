@@ -1,0 +1,4 @@
+cron:
+- description: update from tepco_usage_api
+  url: /cron_tepco
+  schedule: every 30 minutes

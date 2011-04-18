@@ -24,6 +24,9 @@ handlers:
   script: app.py
 - url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}/\d{2}/\d{2}
   script: app.py
+- url: /cron_tepco
+  script: app.py
+  login: admin
 - url: /
   script: app.py
 - url: /static/.*

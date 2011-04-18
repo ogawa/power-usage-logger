@@ -2,6 +2,7 @@
   <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
     <title>Power Usage Logger (tentative)</title>
+    <style type="text/css">* { font-size: small }</style>
   </head>
   <body>
     <h1>Power Usage Logger (tentative)</h1>
@@ -16,7 +17,7 @@
       <li>{{ url_root }}sensors
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridの一覧をJSONで返す。(未実装)</dd>
+	  <dd><div>sensoridの一覧をJSONで返す。(未実装)</div></dd>
 	</dl>
       </li>
     </ul>
@@ -26,13 +27,13 @@
     <ul>
       <li>{{ url_root }}sensors/<em>sensorid</em>
 	<dl>
-	  <dt>GET(*)</dt>
-	  <dd><p>sensoridの最新のデータをJSONで取得する。意味を後で変更する可能性あり。現状はlatestをGETした場合と同じ。</p></dd>
+	  <dt>GET</dt>
+	  <dd><div>sensoridの最新のデータをJSONで取得する。意味を後で変更する可能性あり。現状はlatestをGETした場合と同じ。</div></dd>
 	  <dt>POST</dt>
 	  <dd>
-	    <p>sensoridのデータを生成する。生成に成功すると、センサーデータアイテムのURIをJSONで返す。失敗すると400 Bad Requestを返す。</p>
-	    <p>date, usage, capacityをポストデータとして与える。dateは「%Y%m%d%H%M%S」の14桁の10進数で与える(例: 20110323000000)。usage, capacityも10進数。</p>
-	    <p>実行例:</p>
+	    <div>sensoridのデータを生成する。生成に成功すると、センサーデータアイテムのURIをJSONで返す。失敗すると400 Bad Requestを返す。</div>
+	    <div>date, usage, capacityをポストデータとして与える。dateは「%Y%m%d%H%M%S」の14桁の10進数で与える(例: 20110323000000)。usage, capacityも10進数。kW単位ぐらいで。</div>
+	    <div>実行例:</div>
 	    <pre>
 $ curl {{ url_root }}sensors/tepco -d date=20110323000000 -d usage=3470 -d capacity=3750
 {
@@ -45,37 +46,37 @@ $ curl {{ url_root }}sensors/tepco -d date=20110323000000 -d usage=3470 -d capac
       <li>{{ url_root }}sensors/<em>sensorid</em>/latest
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridの最新のデータをJSONで取得する。</dd>
+	  <dd><div>sensoridの最新のデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
       <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridのYYYY年のsensoridのデータをJSONで取得する。</dd>
+	  <dd><div>sensoridのYYYY年のsensoridのデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
       <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridのYYYY年mm月のsensoridのデータをJSONで取得する。</dd>
+	  <dd><div>sensoridのYYYY年mm月のsensoridのデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
       <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridのYYYY年mm月DD日のsensoridのデータをJSONで取得する。</dd>
+	  <dd><div>sensoridのYYYY年mm月DD日のsensoridのデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
       <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>/<em>HH</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridのYYYY年mm月DD日HH時のsensoridのデータをJSONで取得する。</dd>
+	  <dd><div>sensoridのYYYY年mm月DD日HH時のsensoridのデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
       <li>{{ url_root }}sensors/<em>sensorid</em>/<em>YYYY</em>/<em>mm</em>/<em>DD</em>/<em>HH</em>/<em>MM</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>sensoridのYYYY年mm月DD日HH時MM分のsensoridのデータをJSONで取得する。</dd>
+	  <dd><div>sensoridのYYYY年mm月DD日HH時MM分のsensoridのデータをJSONで取得する。</div></dd>
 	</dl>
       </li>
     </ul>
@@ -86,21 +87,28 @@ $ curl {{ url_root }}sensors/tepco -d date=20110323000000 -d usage=3470 -d capac
       <li>{{ url_root }}items/<em>itemid</em>
 	<dl>
 	  <dt>GET(*)</dt>
-	  <dd>itemidのセンサーデータをJSONで取得する。</dd>
+	  <dd><div>itemidのセンサーデータをJSONで取得する。</div></dd>
 	  <dt>PUT</dt>
-	  <dd>多分実装しない。</dd>
+	  <dd><div>多分実装しない。</div></dd>
 	  <dt>DELETE</dt>
 	  <dd>
-	    <p>itemidのセンサーデータを削除する。成功時にはステータスをJSONで返す。見つからない場合には404 Not Found。</p>
+	    <div>itemidのセンサーデータを削除する。成功時にはステータスをJSONで返す。見つからない場合には404 Not Found。</div>
 	    <pre>
 $ curl -X DELETE {{ url_root }}items/115
 {
   "status": "OK"
 }
 </pre>
-	  </dd>
+          </dd>
 	</dl>
       </li>
+    </ul>
+
+    <h2>TODO</h2>
+
+    <ul>
+      <li>センサー一覧の取得。</li>
+      <li>バルクでデータ生成。JSONで書かれたセンサーデータのセットを受け取って登録。</li>
     </ul>
 
     <h2>Source Code</h2>
