@@ -5,30 +5,30 @@ api_version: 1
 
 handlers:
 - url: /items/\d+
-  script: app.py
+  script: bootstrap.py
 - url: /sensors
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/latest
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}/\d{2}
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}/\d{2}
-  script: app.py
+  script: bootstrap.py
 - url: /sensors/[^/]+/\d{4}/\d{2}/\d{2}/\d{2}/\d{2}/\d{2}
-  script: app.py
+  script: bootstrap.py
 - url: /cron_tepco
-  script: app.py
+  script: bootstrap.py
   login: admin
 - url: /
-  script: app.py
+  script: bootstrap.py
 - url: /static/.*
   static_files: static/\1
   upload: static/(.*)
